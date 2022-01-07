@@ -1,11 +1,11 @@
 import torch
-import albumentations as A
+import albumentations as A  #专门做image augumentation的library
 from albumentations.pytorch import ToTensorV2
 from tqdm import tqdm
 import torch.nn as nn
 import torch.optim as optim
 from model import UNET
-from utils import (
+from utils import (  #这个utils是自己写的文件
     load_checkpoint,
     save_checkpoint,
     get_loaders,
@@ -29,11 +29,11 @@ VAL_IMG_DIR = "data/val_images/"
 VAL_MASK_DIR = "data/val_masks/"
 
 def train_fn(loader, model, optimizer, loss_fn, scaler):
-    loop = tqdm(loader)
+    loop = tqdm(loader)   #用来创建进度条的
 
     for batch_idx, (data, targets) in enumerate(loop):
         data = data.to(device=DEVICE)
-        targets = targets.float().unsqueeze(1).to(device=DEVICE)
+        targets = targets.float().unsqueeze(1).to(device=DEVICE)  #？34：09
 
         # forward
         with torch.cuda.amp.autocast():
@@ -79,7 +79,8 @@ def main():
     )
 
     model = UNET(in_channels=3, out_channels=1).to(DEVICE)
-    loss_fn = nn.BCEWithLogitsLoss()
+    loss_fn = nn.BCEWithLogitsLoss()  #this is the binary cross entropy loss function including sigmoid
+    # 多分类时改out_channels并用cross entropy loss
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
     train_loader, val_loader = get_loaders(
@@ -106,10 +107,12 @@ def main():
 
         # save model
         checkpoint = {
+            # "epoch": xxx,
             "state_dict": model.state_dict(),
             "optimizer":optimizer.state_dict(),
         }
-        save_checkpoint(checkpoint)
+        save_checkpoint(checkpoint)  # ?
+        #torch.save(checkpoint, PATH)
 
         # check accuracy
         check_accuracy(val_loader, model, device=DEVICE)
