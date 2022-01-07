@@ -1,6 +1,6 @@
 import torch
 import torchvision
-from dataset import CarvanaDataset
+from dataset import CarvanaDataset   #这个dataset是自己做的，看dataset.py
 from torch.utils.data import DataLoader
 
 def save_checkpoint(state, filename="my_checkpoint.pth.tar"):
@@ -74,7 +74,7 @@ def check_accuracy(loader, model, device="cuda"):
         f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}"
     )
     print(f"Dice score: {dice_score/len(loader)}")
-    model.train()
+    model.train()   #? 好像没问题
 
 def save_predictions_as_imgs(
     loader, model, folder="saved_images/", device="cuda"
